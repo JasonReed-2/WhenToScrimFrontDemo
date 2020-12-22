@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import TimeBlock from './timeblock'
+import TimeBlock from './timeBlock'
 import cloneDeep from 'lodash.clonedeep'
 import './calendar.css'
 

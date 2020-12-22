@@ -1,5 +1,5 @@
 import React from 'react'
-import './timeblock.css'
+import './timeBlock.css'
 
 export default function TimeBlock(props) {
 
