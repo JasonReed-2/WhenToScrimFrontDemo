@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import TimeBlock from './timeBlock'
+import TimeBlock from './timeblock'
+import cloneDeep from 'lodash.clonedeep'
 import './calendar.css'
 
 const daysOfWeekArray = [
@@ -18,15 +19,19 @@ export default function Calender(props) {
     const [parsedStamps, setParsedStamps] = useState([])
     const [capturing, setCapturing] = useState(false)
     const [selecting, setSelecting] = useState(true)
+    const [beginCord, setBeginCord] = useState({})
+    const [endCord, setEndCord] = useState({})
+    const [calendarAr, setCalendarAr] = useState()
+    const [tempCalAr, setTempCalAr] = useState()
 
     //set up table by the given parameters
     useEffect(() => {
         var timeStampTemp = []
         var parsedStamps = []
-        for (var i = props.start; i <= props.end; i += props.jump) {
-            timeStampTemp.push(i)
-            let hour = Math.floor(i / 60);
-            let minute = i % 60;
+        for (var k = props.start; k <= props.end; k += props.jump) {
+            timeStampTemp.push(k)
+            let hour = Math.floor(k / 60);
+            let minute = k % 60;
             if (minute < 10) {
                 minute = "0" + minute
             }
@@ -34,13 +39,19 @@ export default function Calender(props) {
         }
         setTimeStamps([...timeStampTemp])
         setParsedStamps([...parsedStamps])
+
+        let calendarArr = []
+        for (var i = 0; i < daysOfWeekArray.length; i++) {
+            calendarArr.push([])
+            for (var j = 0; j < parsedStamps.length; j++) {
+                calendarArr[i].push(false)
+                calendarArr[i][j] = false
+            }
+        }
+        setCalendarAr([...calendarArr])
+        setTempCalAr([...calendarArr])
         // eslint-disable-next-line
     }, [])
-
-    //function used to determine if the user is currently setting times as available or unavailable
-    const setCaptureType = (selecting) => {
-        setSelecting(selecting)
-    }
 
     //maps out days of the week to the table
     const daysOfWeek = daysOfWeekArray.map((item) => {
@@ -48,9 +59,9 @@ export default function Calender(props) {
     })
 
     //holds the timeStamps and the availability blocks
-    const timeCol = parsedStamps.map((item) => {
-        const blank = daysOfWeekArray.map((item) => {
-            return (<TimeBlock selecting={selecting} setType={setCaptureType} capturing={capturing}/>)
+    const timeCol = parsedStamps.map((item, index) => {
+        const blank = daysOfWeekArray.map((item, ind) => {
+            return (<TimeBlock available={tempCalAr[ind][index]} index={{x: ind, y: index}} setType={setSelecting} capturing={capturing} setBegin={setBeginCord} setEnd={setEndCord}/>)
         })
         return (
             <tr>
@@ -60,8 +71,52 @@ export default function Calender(props) {
         )
     })
 
+    const handleMouseDown = () => {
+        setCapturing(true)
+    }
+    
+    const handleMouseUp = () => {
+        setCapturing(false)
+        let tempCal = boxSelect()
+        setCalendarAr([...tempCal])
+    }
+
+    const boxSelect = () => {
+        let tempCal = cloneDeep(calendarAr)
+
+        let [startX, endX] = determineStartAndEnd(beginCord.x, endCord.x)
+        let [startY, endY] = determineStartAndEnd(beginCord.y, endCord.y)
+
+        for (var i = startX; i <= endX; i++) {
+            for (var j = startY; j <= endY; j++) {
+                tempCal[i][j] = selecting
+            }
+        }
+        return tempCal
+    }
+
+    const determineStartAndEnd = (num1, num2) => {
+        let start, end
+        if (num1 <= num2) {
+            start = num1
+            end = num2
+        } else {
+            start = num2
+            end = num1
+        }
+        return [start, end]
+    }
+
+    useEffect(() => {
+        if (endCord.x !== undefined && endCord.y !== undefined) {
+            let tempCal = boxSelect()
+            setTempCalAr([...tempCal])
+        }
+        // eslint-disable-next-line
+    }, [endCord])
+
     return (
-        <div onMouseDown={() => setCapturing(true)} onMouseUp={() => setCapturing(false)}>
+        <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
         <table className="unselectable" border="1">
             <thead>
                 <th>Time</th>
