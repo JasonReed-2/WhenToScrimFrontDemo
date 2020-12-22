@@ -117,7 +117,7 @@ export default function Calender(props) {
 
     return (
         <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
-        <table className="unselectable" border="1">
+        <table cellSpacing="0" className="unselectable" border="1">
             <thead>
                 <th>Time</th>
                 {daysOfWeek}
