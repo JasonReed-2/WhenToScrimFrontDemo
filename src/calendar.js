@@ -116,7 +116,7 @@ export default function Calender(props) {
     }, [endCord])
 
     return (
-        <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+        <div onPointerDown={handleMouseDown} onPointerUp={handleMouseUp}>
         <table cellSpacing="0" className="unselectable" border="1">
             <thead>
                 <th>Time</th>

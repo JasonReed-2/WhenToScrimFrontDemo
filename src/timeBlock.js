@@ -17,6 +17,6 @@ export default function TimeBlock(props) {
     const color = props.available ? "green" : "white"
 
     return (
-        <td id="availblock" className={color} onMouseDown={sendCaptureType} onMouseMove={toggleAvailability}>{}</td>
+        <td id="availblock" className={color} onPointerDown={sendCaptureType} onPointerMove={toggleAvailability}>{}</td>
     )
 }
