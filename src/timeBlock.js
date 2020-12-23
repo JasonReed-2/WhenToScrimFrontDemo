@@ -14,9 +14,18 @@ export default function TimeBlock(props) {
         props.setType(!props.available)
     }
 
-    const color = props.available ? "green" : "white"
+    let color = props.available >= 1 ? "green" : "white"
+    if (props.personal === false) {
+        color = props.available === props.userCount ? "green" : "white"
+    }
+
+    let ret = <td id="availblock" className={color} onPointerDown={sendCaptureType} onPointerMove={toggleAvailability}>{}</td>
+
+    if (props.personal === false) {
+        ret = <td id="availblock" className={color} onPointerDown={sendCaptureType} onPointerMove={toggleAvailability}>{props.available}</td>
+    }
 
     return (
-        <td id="availblock" className={color} onPointerDown={sendCaptureType} onPointerMove={toggleAvailability}>{}</td>
+        <>{ret}</>
     )
 }

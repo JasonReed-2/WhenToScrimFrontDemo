@@ -39,19 +39,38 @@ export default function Calender(props) {
         }
         setTimeStamps([...timeStampTemp])
         setParsedStamps([...parsedStamps])
-
         let calendarArr = []
-        for (var i = 0; i < daysOfWeekArray.length; i++) {
-            calendarArr.push([])
-            for (var j = 0; j < parsedStamps.length; j++) {
-                calendarArr[i].push(false)
-                calendarArr[i][j] = false
+        if (props.calendar !== undefined && props.personal === false) {
+            calendarArr = [...props.calendar]
+        } else {
+            for (var i = 0; i < daysOfWeekArray.length; i++) {
+                calendarArr.push([])
+                for (var j = 0; j < parsedStamps.length; j++) {
+                    calendarArr[i].push(0)
+                    calendarArr[i][j] = 0
+                }
             }
         }
         setCalendarAr([...calendarArr])
         setTempCalAr([...calendarArr])
         // eslint-disable-next-line
     }, [])
+
+    useEffect(() => {
+        if (props.startCal !== undefined && props.personal === true) {
+            setCalendarAr([...props.startCal])
+            setTempCalAr([...props.startCal])
+        }
+        // eslint-disable-next-line
+    }, [props.startCal])
+
+    useEffect(() => {
+        if (props.calendar !== undefined && props.personal === false) {
+            setCalendarAr([...props.calendar])
+            setTempCalAr([...props.calendar])
+        }
+        // eslint-disable-next-line
+    }, [props.calendar])
 
     //maps out days of the week to the table
     const daysOfWeek = daysOfWeekArray.map((item) => {
@@ -61,7 +80,7 @@ export default function Calender(props) {
     //holds the timeStamps and the availability blocks
     const timeCol = parsedStamps.map((item, index) => {
         const blank = daysOfWeekArray.map((item, ind) => {
-            return (<TimeBlock available={tempCalAr[ind][index]} index={{x: ind, y: index}} setType={setSelecting} capturing={capturing} setBegin={setBeginCord} setEnd={setEndCord}/>)
+            return (<TimeBlock personal={props.personal} available={tempCalAr[ind][index]} index={{x: ind, y: index}} setType={setSelecting} capturing={capturing} setBegin={setBeginCord} setEnd={setEndCord} userCount={props.userCount}/>)
         })
         return (
             <tr>
@@ -72,16 +91,23 @@ export default function Calender(props) {
     })
 
     const handleMouseDown = () => {
-        setCapturing(true)
+        if (props.personal) setCapturing(true)
     }
     
     const handleMouseUp = () => {
-        setCapturing(false)
-        let tempCal = boxSelect()
-        setCalendarAr([...tempCal])
+        if (props.personal) {
+            setCapturing(false)
+            let tempCal = boxSelect()
+            setCalendarAr([...tempCal])
+            props.update([...tempCal])
+        }
     }
 
     const boxSelect = () => {
+        let setter = 0
+        if (selecting) {
+            setter = 1
+        }
         let tempCal = cloneDeep(calendarAr)
 
         let [startX, endX] = determineStartAndEnd(beginCord.x, endCord.x)
@@ -89,7 +115,7 @@ export default function Calender(props) {
 
         for (var i = startX; i <= endX; i++) {
             for (var j = startY; j <= endY; j++) {
-                tempCal[i][j] = selecting
+                tempCal[i][j] = setter
             }
         }
         return tempCal

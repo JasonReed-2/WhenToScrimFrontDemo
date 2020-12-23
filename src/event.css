@@ -1,0 +1,11 @@
+#bigCont {
+    display: flex;
+}
+
+#personal {
+    flex: 0 0 65%;
+}
+
+#shared {
+    flex: 1;
+}
