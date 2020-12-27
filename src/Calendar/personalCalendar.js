@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import TimeBlock from './timeBlock'
+import PersonalTimeBlock from '../TimeBlock/personalTimeBlock'
 import cloneDeep from 'lodash.clonedeep'
 import './calendar.css'
 
@@ -13,7 +13,12 @@ const daysOfWeekArray = [
     "Sunday"
 ]
 
-export default function Calender(props) {
+//maps out days of the week to the table
+const daysOfWeek = daysOfWeekArray.map((item) => {
+    return (<th>{item}</th>)
+})
+
+export default function PersonalCalendar(props) {
     // eslint-disable-next-line
     const [timeStamps, setTimeStamps] = useState([])
     const [parsedStamps, setParsedStamps] = useState([])
@@ -28,6 +33,7 @@ export default function Calender(props) {
     useEffect(() => {
         var timeStampTemp = []
         var parsedStamps = []
+
         for (var k = props.start; k <= props.end; k += props.jump) {
             timeStampTemp.push(k)
             let hour = Math.floor(k / 60);
@@ -37,50 +43,43 @@ export default function Calender(props) {
             }
             parsedStamps.push(hour + ":" + minute)
         }
+
         setTimeStamps([...timeStampTemp])
         setParsedStamps([...parsedStamps])
+
         let calendarArr = []
-        if (props.calendar !== undefined && props.personal === false) {
-            calendarArr = [...props.calendar]
-        } else {
-            for (var i = 0; i < daysOfWeekArray.length; i++) {
-                calendarArr.push([])
-                for (var j = 0; j < parsedStamps.length; j++) {
-                    calendarArr[i].push(0)
-                    calendarArr[i][j] = 0
-                }
+        for (var i = 0; i < daysOfWeekArray.length; i++) {
+            calendarArr.push([])
+            for (var j = 0; j < parsedStamps.length; j++) {
+                calendarArr[i].push(0)
+                calendarArr[i][j] = 0
             }
         }
+        
         setCalendarAr([...calendarArr])
         setTempCalAr([...calendarArr])
         // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
-        if (props.startCal !== undefined && props.personal === true) {
+        if (props.startCal !== undefined) {
             setCalendarAr([...props.startCal])
             setTempCalAr([...props.startCal])
         }
         // eslint-disable-next-line
     }, [props.startCal])
 
-    useEffect(() => {
-        if (props.calendar !== undefined && props.personal === false) {
-            setCalendarAr([...props.calendar])
-            setTempCalAr([...props.calendar])
-        }
-        // eslint-disable-next-line
-    }, [props.calendar])
-
-    //maps out days of the week to the table
-    const daysOfWeek = daysOfWeekArray.map((item) => {
-        return (<th>{item}</th>)
-    })
-
     //holds the timeStamps and the availability blocks
     const timeCol = parsedStamps.map((item, index) => {
         const blank = daysOfWeekArray.map((item, ind) => {
-            return (<TimeBlock personal={props.personal} available={tempCalAr[ind][index]} index={{x: ind, y: index}} setType={setSelecting} capturing={capturing} setBegin={setBeginCord} setEnd={setEndCord} userCount={props.userCount}/>)
+            return (<PersonalTimeBlock 
+                    available={tempCalAr[ind][index]} 
+                    index={{x: ind, y: index}} 
+                    setType={setSelecting} 
+                    capturing={capturing} 
+                    setBegin={setBeginCord} 
+                    setEnd={setEndCord}
+                />)
         })
         return (
             <tr>
@@ -91,16 +90,14 @@ export default function Calender(props) {
     })
 
     const handleMouseDown = () => {
-        if (props.personal) setCapturing(true)
+        setCapturing(true)
     }
     
     const handleMouseUp = () => {
-        if (props.personal) {
-            setCapturing(false)
-            let tempCal = boxSelect()
-            setCalendarAr([...tempCal])
-            props.update([...tempCal])
-        }
+        setCapturing(false)
+        let tempCal = boxSelect()
+        setCalendarAr([...tempCal])
+        props.update([...tempCal])
     }
 
     const boxSelect = () => {
