@@ -8,8 +8,8 @@ import {
 } from "react-router-dom";
 
 import socketClient from 'socket.io-client'
-//const SERVER = 'https://whentoscrimdemo.herokuapp.com/'
-const SERVER = 'http://localhost:8080'
+const SERVER = 'https://whentoscrimdemo.herokuapp.com/'
+//const SERVER = 'http://localhost:8080'
 const socket = socketClient(SERVER)
 
 export default function RouterSocker(props) {
