@@ -1,60 +1,37 @@
 import React, {useState, useEffect} from 'react'
-import socketClient from 'socket.io-client'
-//import Calender from './calendar'
+import { useParams } from 'react-router-dom'
 import PersonalCalendar from '../Calendar/personalCalendar'
 import SharedCalendar from '../Calendar/sharedCalendar'
 import './event.css'
-const SERVER = 'https://whentoscrimdemo.herokuapp.com/'
-//const SERVER = 'http://localhost:8080'
 
 export default function MainEvent(props) {
-    const [sock, setSocket] = useState(undefined)
+    const socket = props.socket
     const [sharedCal, setSharedCal] = useState()
     const [personalCal, setPersonalCal] = useState()
     const [connections, setConnections] = useState(0)
-    const [availableRooms, setAvailableRooms] = useState([])
-    const [availableUsers, setAvailableUsers] = useState([])
-
-    const availableRoomsList = availableRooms.map((item) => {
-        return (<button onClick={() => sock.emit('newRoom', item)}>{item}</button>)
-    })
-
-    const availableUsersList = availableUsers.map((item) => {
-        return (<button onClick={() => sock.emit('newUser', item)}>{item}</button>)
-    })
+    const [start, setStart] = useState(300)
+    const [end, setEnd] = useState(600)
+    const [jump, setJump] = useState(15)
+    const {id} = useParams()
 
     const [userInput, setUserInput] = useState()
     const [userNameShow, setUserNameShow] = useState()
 
     const setUserName = () => {
-        sock.emit('newUser', userInput)
+        socket.emit('newUser', userInput)
     }
 
     const handleType = (e) => {
         setUserInput(e.target.value)
     }
 
-    const [roomName, setRoomName] = useState()
     const [roomNameShow, setRoomNameShow] = useState()
 
-    const handleName = (e) => {
-        setRoomName(e.target.value)
-    }
-
-    const submitName = () => {
-        sock.emit('newRoom', roomName)
-    }
-
     const calendarUpdate = (newCal) => {
-        sock.emit('updateCalendar', newCal)
-    }
-
-    const clearServer = () => {
-        sock.emit('clear')
+        socket.emit('updateCalendar', newCal)
     }
 
     useEffect(() => {
-        var socket = socketClient(SERVER)
         socket.on('calendarUpdate', (newCalendar) => {
             setSharedCal(newCalendar)
         })
@@ -70,46 +47,46 @@ export default function MainEvent(props) {
         socket.on('updateUsername', (newUsername) => {
             setUserNameShow(newUsername)
         })
-        socket.on('updateAvailableRooms', (roomsList) => {
-            setAvailableRooms(roomsList)
+        socket.on('calendarParametersUpdate', (start, end, jump) => {
+            setStart(start)
+            setEnd(end)
+            setJump(jump)
         })
-        socket.on('updateUsersList', (usersList) => {
-            console.log(usersList)
-            setAvailableUsers(usersList)
-        })
-        setSocket(socket)
+        socket.emit('joinRoom', id)
+        // eslint-disable-next-line
     }, [])
     return (
         <>
-        <h1>{'Current Room: ' + roomNameShow}</h1>
-        <li>
-            {availableRoomsList}
-        </li>
-        <h1>{'Current User: ' + userNameShow}</h1>
-        <li>
-            {availableUsersList}
-        </li>
-        <input type="text" onChange={handleType} placeholder="Change Username"></input>
-        <button onClick={setUserName}>Add New User</button>
-        <input type="text" onChange={handleName} placeholder="Change Room Name"></input>
-        <button onClick={submitName}>Add Room</button>
-        <button onClick={clearServer}>Clear</button>
-        <h1>{connections}</h1>
-        <div id="bigCont">            
-            <div id="personal"><PersonalCalendar 
-                start={300} 
-                end={600} 
-                jump={15} 
-                startCal={personalCal} 
-                update={calendarUpdate}
-            /></div>
-            <div id="shared"><SharedCalendar 
-                start={300} 
-                end={600} 
-                jump={15} 
+        <h3>{'Current Room: ' + roomNameShow}</h3>
+        {userNameShow ? <h3>{'Current User: ' + userNameShow}</h3> : <></>}
+        <div id="bigCont">
+            <div id="personal">
+                {userNameShow ? 
+                    <>
+                        <h3>Personal Calendar</h3>
+                        <PersonalCalendar 
+                        start={start} 
+                        end={end} 
+                        jump={jump} 
+                        startCal={personalCal} 
+                        update={calendarUpdate}/>
+                    </> 
+                    : 
+                    <>
+                        <input type="text" onChange={handleType} placeholder="Username"></input>
+                        <button onClick={setUserName}>Sign In</button>
+                    </>
+                }
+            </div>            
+            <div id="shared">
+                <h3>Group Calendar</h3>
+                <SharedCalendar 
+                start={start} 
+                end={end} 
+                jump={jump} 
                 calendar={sharedCal} 
-                userCount={connections} 
-            /></div>
+                userCount={connections}/>
+            </div>
         </div>
         </>
     ) 

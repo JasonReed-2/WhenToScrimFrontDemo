@@ -40,10 +40,11 @@ export default function Calender(props) {
         setParsedStamps([...parsedStamps])
         if (props.calendar !== undefined) setTempCalAr([...props.calendar])
         // eslint-disable-next-line
-    }, [])
+    }, [props.start, props.end, props.jump])
 
     useEffect(() => {
-        if (props.calendar !== undefined) {
+        console.log(props.calendar)
+        if (props.calendar !== undefined && props.calendar !== null) {
             setTempCalAr([...props.calendar])
         }
         // eslint-disable-next-line

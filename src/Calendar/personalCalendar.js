@@ -59,10 +59,10 @@ export default function PersonalCalendar(props) {
         setCalendarAr([...calendarArr])
         setTempCalAr([...calendarArr])
         // eslint-disable-next-line
-    }, [])
+    }, [props.start, props.end, props.jump])
 
     useEffect(() => {
-        if (props.startCal !== undefined) {
+        if (props.startCal !== undefined && props.startCal !== null) {
             setCalendarAr([...props.startCal])
             setTempCalAr([...props.startCal])
         }
