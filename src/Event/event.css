@@ -1,11 +1,12 @@
 #bigCont {
     display: flex;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
+    background-color: lavender;
+    padding: 1%;
 }
 
-#personal {
-    flex: 0 0 65%;
-}
-
-#shared {
-    flex: 1;
+.heading {
+    text-align: center;
 }

@@ -139,7 +139,7 @@ export default function PersonalCalendar(props) {
     }, [endCord])
 
     return (
-        <div onPointerDown={handleMouseDown} onPointerUp={handleMouseUp}>
+        <div className="cont" onPointerDown={handleMouseDown} onPointerUp={handleMouseUp}>
         <table cellSpacing="0" className="unselectable" border="1">
             <thead>
                 <th>Time</th>

@@ -1,11 +1,9 @@
 .unselectable {
     user-select: none;
 }
-/* 
-div {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    left: 0px;
-    bottom: 0px;
-} */
+
+.cont {
+    overflow: auto;
+    height: 500px;
+    background-color: white;
+}

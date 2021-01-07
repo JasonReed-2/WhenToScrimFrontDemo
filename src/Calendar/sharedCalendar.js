@@ -67,7 +67,7 @@ export default function Calender(props) {
     })
 
     return (
-        <div>
+        <div className="cont">
         <table cellSpacing="0" className="unselectable" border="1">
             <thead>
                 <th>Time</th>

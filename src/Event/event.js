@@ -57,13 +57,12 @@ export default function MainEvent(props) {
     }, [])
     return (
         <>
-        <h3>{'Current Room: ' + roomNameShow}</h3>
-        {userNameShow ? <h3>{'Current User: ' + userNameShow}</h3> : <></>}
+        <h3 className="heading">{roomNameShow}</h3>
         <div id="bigCont">
             <div id="personal">
                 {userNameShow ? 
                     <>
-                        <h3>Personal Calendar</h3>
+                        <h3 className="heading">{'Your Availability'}</h3>
                         <PersonalCalendar 
                         start={start} 
                         end={end} 
@@ -79,7 +78,7 @@ export default function MainEvent(props) {
                 }
             </div>            
             <div id="shared">
-                <h3>Group Calendar</h3>
+                <h3 className="heading">Group Availability</h3>
                 <SharedCalendar 
                 start={start} 
                 end={end} 
