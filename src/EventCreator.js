@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from 'react'
+import InputForm from './GeneralForms/InputForm'
+import SelectionForm from './GeneralForms/SelectionForm'
 import { useHistory } from 'react-router-dom'
 
 let options = []
@@ -34,18 +36,6 @@ export default function EventCreator(props) {
         // eslint-disable-next-line
     }, [])
 
-    const changeTitle = (e) => {
-        setTitle(e.target.value)
-    }
-
-    const changeStart = (e) => {
-        setStart(e.target.value)
-    }
-
-    const changeEnd = (e) => {
-        setEnd(e.target.value)
-    }
-
     const createEvent = () => {
         socket.emit('newRoom', title, start, end, jump)
     }
@@ -57,16 +47,12 @@ export default function EventCreator(props) {
     return (
         <div>
             {title !== '' ? <h3>{"Title: " + title}</h3> : <></>}
-            <input type="text" onChange={changeTitle} placeholder="Title Of Event" />
+            <InputForm setInput={setTitle} holder={"Title Of Event"} />
             <h3>Earliest Start</h3>
-            <select onChange={changeStart} name="start">
-                {options}
-            </select>
+            <SelectionForm changeOption={setStart} name="start" options={options} defaultValue="0"/>
             <h3>Latest End</h3>
-            <select name="end" onChange={changeEnd} defaultValue="1440">
-                {options}
-            </select>
-            {/*eslint-disable-next-line*/}
+            <SelectionForm changeOption={setEnd} name="end" options={options} defaultValue="1440"/>
+            {/* eslint-disable-next-line */}
             <h3></h3>
             <button onClick={createEvent}>Create Room</button>
             <button onClick={clearServer}>Clear Server</button>
